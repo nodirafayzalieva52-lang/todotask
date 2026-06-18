@@ -1,48 +1,28 @@
 package config
 
-// import (
-// 	"bufio"
-// 	"os"
-// 	"strings"
-// )
+import (
+	"fmt"
 
-// type Config struct {
-// 	DBHost     string
-// 	DBPort     string
-// 	DBUser     string
-// 	DBPassword string
-// 	DBName     string
-// }
+	"github.com/ilyakaznacheev/cleanenv"
+)
 
-// func New(path string) (*Config, error) {
-// 	file, err := os.Open(path)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer file.Close()
+type Config struct {
+	HttpPort string `env:"HTTP_PORT"`
+	Storage  string `env:"STORAGE"`
 
-// 	cfg := &Config{}
-// 	scanner := bufio.NewScanner(file)
-	
-// 	for scanner.Scan() {
-// 		line := scanner.Text()
-// 		if strings.HasPrefix(line, "#") || line == "" {
-// 			continue
-// 		}
-// 		parts := strings.SplitN(line, "=", 2)
-// 		if len(parts) != 2 {
-// 			continue
-// 		}
-// 		key := strings.TrimSpace(parts[0])
-// 		val := strings.TrimSpace(parts[1])
+	DBHost     string `env:"DB_HOST"`
+	DBPort     int    `env:"DB_PORT"`
+	DBUser     string `env:"DB_USER"`
+	DBPassword string `env:"DB_PASSWORD"`
+	DBName     string `env:"DB_NAME"`
+}
 
-// 		switch key {
-// 		case "DB_HOST": cfg.DBHost = val
-// 		case "DB_PORT": cfg.DBPort = val
-// 		case "DB_USER": cfg.DBUser = val
-// 		case "DB_PASSWORD": cfg.DBPassword = val
-// 		case "DB_NAME": cfg.DBName = val
-// 		}
-// 	}
-// 	return cfg, nil
-// }
+func New(configPath string) (Config, error) {
+	var cfg Config
+
+	err := cleanenv.ReadConfig(configPath, &cfg)
+	if err != nil {
+		return Config{}, fmt.Errorf("cleanenv.ReadConfig: %w", err)
+	}
+	return cfg, err
+}
