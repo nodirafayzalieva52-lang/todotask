@@ -1,21 +1,29 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
-  "fmt"
 
 	"nd/handlers"
-  "nd/internal/config"
+	"nd/internal/config"
 	"nd/internal/models"
 	"nd/internal/repository"
 	"nd/internal/service"
+	"nd/pkg/logger"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	// "go.uber.org/zap"
 )
 
 func main() {
+	logger, err := logger.New(true)
+	if err != nil {
+		log.Fatal("Failed to create logger", err)
+	}
+
+
   cfg, err := config.New("./config/config.env")
 	if err != nil{
 		log.Fatal("config.New",err)
@@ -29,6 +37,7 @@ func main() {
 		cfg.DBName,
 		cfg.DBPort,
 	)
+
 	
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -43,7 +52,7 @@ func main() {
 
 	userRepo := repository.New(db)
 	userService := service.New(userRepo)
-	userHandler := handler.New(userService)
+	userHandler := handler.New(logger, userService)
 
 	mux := http.NewServeMux()
 

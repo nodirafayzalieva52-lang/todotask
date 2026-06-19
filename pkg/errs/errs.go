@@ -2,14 +2,12 @@ package errs
 
 import "net/http"
 
-// AppError — наша кастомная структура ошибки
 type AppError struct {
-	HTTPStatus int    `json:"-"`       // Статус ответа (не выводится в JSON)
-	Message    string `json:"error"`   // Красивое сообщение для клиента
-	LogMessage string `json:"-"`       // Подробное сообщение для логгера (техническое)
+	HTTPStatus int    `json:"-"`       
+	Message    string `json:"error"`   
+	LogMessage string `json:"-"`       
 }
 
-// Реализуем стандартный интерфейс error для Go
 func (e *AppError) Error() string {
 	if e.LogMessage != "" {
 		return e.LogMessage
@@ -17,23 +15,21 @@ func (e *AppError) Error() string {
 	return e.Message
 }
 
-// Готовые заготовки частых ошибок проекта
 var (
 	ErrNotFound = &AppError{
 		HTTPStatus: http.StatusNotFound,
-		Message:    "Ресурс не найден",
+		Message:    "Resurs not found",
 	}
 	ErrBadRequest = &AppError{
 		HTTPStatus: http.StatusBadRequest,
-		Message:    "Некорректный запрос или неверный формат данных",
+		Message:    "Error",
 	}
 	ErrInternal = &AppError{
 		HTTPStatus: http.StatusInternalServerError,
-		Message:    "Внутренняя ошибка сервера",
+		Message:    "Error",
 	}
 )
 
-// Новый конструктор, если нужно создать уникальную ошибку на лету
 func New(status int, msg string, logMsg string) *AppError {
 	return &AppError{
 		HTTPStatus: status,
