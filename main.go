@@ -50,9 +50,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	userRepo := repository.New(db)
-	userService := service.New(userRepo)
-	userHandler := handler.New(logger, userService)
+	usersrepo := repository.New(db)
+	IUserService := service.New(usersrepo)
+	userHandler := handler.New(logger, IUserService)
 
 	mux := http.NewServeMux()
 
@@ -61,8 +61,18 @@ func main() {
 
 	mux.HandleFunc("GET /user", userHandler.GetByID)
 	mux.HandleFunc("DELETE /user", userHandler.Delete)
-	mux.HandleFunc("PATCH /user/{id}/status", userHandler.Update)
+	mux.HandleFunc("PATCH /user/{id}", userHandler.Update)
 
+	TaskRepo := repository.New(db)
+	ItaskService := service.New(TaskRepo)
+	TaskHandler := handler.New(logger, ItaskService)
+
+	mux.HandleFunc("POST /tasks", TaskHandler.Create)
+	mux.HandleFunc("GET /tasks", TaskHandler.GetAll)
+
+	mux.HandleFunc("GET /task", TaskHandler.GetByID)
+	mux.HandleFunc("DELETE /task", TaskHandler.Delete)
+	mux.HandleFunc("PATCH /task/{id}/status", TaskHandler.Update)
 	log.Println("server started on :8080")
 
 	err = http.ListenAndServe(":8080", mux)

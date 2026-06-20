@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	"strings"
 	"nd/internal/models"
 	"nd/internal/repository"
+	"strings"
 )
 
 type ItaskService interface {
@@ -18,6 +18,7 @@ type ItaskService interface {
 
 type service struct {
 	repo repository.ItaskRepo
+	userRepo repository.Iuserrepo
 }
 
 func New(repo repository.ItaskRepo) ItaskService {
