@@ -1,9 +1,10 @@
 package repository
 
 import (
-  "nd/internal/models"
+	"fmt"
+	"nd/internal/models"
 
-  "gorm.io/gorm"
+	"gorm.io/gorm"
 )
 
 type ItaskRepo interface {
@@ -11,6 +12,7 @@ type ItaskRepo interface {
   GetAll() ([]models.Task, error)
   GetByID(id uint) (models.Task, error)
   Delete(id uint) error
+  Update(id uint) error
 }
 
 type repo struct {
@@ -45,4 +47,14 @@ func (r *repo) GetByID(id uint) (models.Task, error) {
 
 func (r *repo) Delete(id uint) error {
   return r.db.Delete(&models.Task{}, id).Error
+}
+
+func (r *repo) Update(id uint) error {
+err := r.db.Model(&models.Task{}).Where("id = ?", id).Update("status", "done").Error
+
+  if err != nil {
+    return fmt.Errorf("r.db.Model: %w", err)
+  }
+
+  return nil
 }

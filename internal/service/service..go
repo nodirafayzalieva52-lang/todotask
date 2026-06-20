@@ -12,6 +12,8 @@ type ItaskService interface {
 	GetAll() ([]models.Task, error)
 	GetByID(id uint) (models.Task, error)
 	Delete(id uint) error
+	UpdateById(id uint) error
+	
 }
 
 type service struct {
@@ -48,4 +50,8 @@ func (s *service) Delete(id uint) error {
 		return errors.New("invalid id")
 	}
 	return s.repo.Delete(id)
+}
+
+func (s *service) UpdateById(id uint) error{
+	return s.repo.Update(id)
 }

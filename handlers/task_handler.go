@@ -1,15 +1,15 @@
-  package handler
+package handler
 
-  import (
-    "encoding/json"
-    "nd/internal/models"
-    "nd/internal/service"
-    "nd/pkg/logger"
-    "net/http"
-    "strconv"
+import (
+	"encoding/json"
+	"nd/internal/models"
+	"nd/internal/service"
+	"nd/pkg/logger"
+	"net/http"
+	"strconv"
 
-    "go.uber.org/zap"
-  )
+	"go.uber.org/zap"
+)
 
   type TaskHandler struct {
     logger      *logger.Logger
@@ -101,6 +101,25 @@
     err = h.service.Delete(uint(id))
     if err != nil {
       h.logger.Error("h.userService.Delete", zap.Error(err))
+      http.Error(w, err.Error(), http.StatusInternalServerError)
+      return
+    }
+
+    w.WriteHeader(http.StatusNoContent)
+  }
+
+  func (h *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
+      idStr := r.PathValue("id")
+      id, err := strconv.Atoi(idStr)
+    if err != nil {
+      h.logger.Error("h.userService.Delete", zap.Error(err))
+      http.Error(w, "invalid id", http.StatusBadRequest)
+      return
+    }
+
+    err = h.service.UpdateById(uint(id))
+    if err != nil {
+      h.logger.Error("h.userService.Update", zap.Error(err))
       http.Error(w, err.Error(), http.StatusInternalServerError)
       return
     }

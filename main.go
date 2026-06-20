@@ -61,6 +61,7 @@ func main() {
 
 	mux.HandleFunc("GET /user", userHandler.GetByID)
 	mux.HandleFunc("DELETE /user", userHandler.Delete)
+	mux.HandleFunc("PATCH /user/{id}/status", userHandler.Update)
 
 	log.Println("server started on :8080")
 
